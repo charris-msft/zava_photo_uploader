@@ -53,3 +53,7 @@ logs/
 # Temporary files
 tmp/
 temp/
+
+# Uploaded photos (local only)
+src/uploads/
+uploads/
