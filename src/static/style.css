@@ -1,0 +1,253 @@
+/* ===== ZAVA BRAND SYSTEM ===== */
+:root {
+  --zava-blue: #00A4EF;
+  --zava-cyan: #00E5FF;
+  --zava-navy: #1B3A52;
+  --zava-navy-light: #254d6b;
+  --zava-gray: #E0E2E5;
+  --zava-gray-light: #F4F6F8;
+  --zava-shadow: rgba(27, 58, 82, 0.10);
+  --zava-shadow-hover: rgba(27, 58, 82, 0.18);
+}
+
+/* Layout */
+.zava-bg {
+  background: linear-gradient(150deg, #f7fbff 0%, #eef5fc 60%, #e8f0f7 100%);
+  min-height: 100vh;
+}
+
+/* Navigation - white with color logo */
+.zava-nav {
+  background: white;
+  border-bottom: 3px solid var(--zava-blue);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px var(--zava-shadow);
+}
+.zava-logo {
+  height: 38px;
+  width: auto;
+  display: block;
+}
+.zava-nav-link {
+  color: var(--zava-navy);
+  transition: color 0.2s, background 0.2s;
+  border-radius: 6px;
+  text-decoration: none;
+}
+.zava-nav-link:hover {
+  color: var(--zava-blue);
+  background: rgba(0, 164, 239, 0.07);
+}
+.zava-nav-link.active {
+  color: var(--zava-blue);
+  font-weight: 700;
+}
+
+/* Cards */
+.zava-card {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 2px 16px var(--zava-shadow);
+  transition: box-shadow 0.25s;
+}
+.zava-card-photo {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px var(--zava-shadow);
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+.zava-card-photo:hover {
+  box-shadow: 0 8px 28px var(--zava-shadow-hover);
+  transform: translateY(-3px);
+}
+
+/* Buttons */
+.zava-btn-primary {
+  background: var(--zava-blue);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.zava-btn-primary:hover:not(:disabled) {
+  background: #0090d4;
+  box-shadow: 0 4px 16px rgba(0, 164, 239, 0.4);
+  transform: translateY(-1px);
+}
+.zava-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+.zava-btn-outline {
+  background: transparent;
+  color: var(--zava-blue);
+  border: 2px solid var(--zava-blue);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+.zava-btn-outline:hover {
+  background: var(--zava-blue);
+  color: white;
+  box-shadow: 0 4px 14px rgba(0, 164, 239, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Inputs */
+.zava-input {
+  border: 1.5px solid var(--zava-gray);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color: #2d3748;
+  background: white;
+  font-size: 0.9rem;
+}
+.zava-input:focus {
+  outline: none;
+  border-color: var(--zava-blue);
+  box-shadow: 0 0 0 3px rgba(0, 164, 239, 0.15);
+}
+
+/* Drop zone */
+.zava-drop-zone {
+  border: 2px dashed #c8cbd0;
+  border-radius: 12px;
+  transition: all 0.2s;
+  background: var(--zava-gray-light);
+  cursor: pointer;
+}
+.zava-drop-zone:hover,
+.zava-drop-zone.drag-over {
+  border-color: var(--zava-blue);
+  border-style: solid;
+  background: rgba(0, 164, 239, 0.04);
+}
+.zava-drop-zone.drag-over {
+  background: rgba(0, 164, 239, 0.08);
+  box-shadow: 0 0 0 4px rgba(0, 164, 239, 0.12);
+}
+
+/* Progress */
+.zava-progress-track {
+  background: var(--zava-gray);
+  border-radius: 999px;
+  overflow: hidden;
+  height: 6px;
+}
+.zava-progress-bar {
+  background: linear-gradient(90deg, var(--zava-blue), var(--zava-cyan));
+  height: 6px;
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+/* Headings */
+.zava-heading { color: var(--zava-navy); font-weight: 700; }
+
+/* Gradient text */
+.zava-gradient-text {
+  background: linear-gradient(135deg, var(--zava-blue) 0%, var(--zava-cyan) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Icon circles */
+.zava-icon-circle {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: rgba(0, 164, 239, 0.1);
+  color: var(--zava-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Footer */
+.zava-footer {
+  background: var(--zava-navy);
+  color: rgba(255,255,255,0.6);
+}
+
+/* Tags */
+.zava-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: rgba(0, 164, 239, 0.1);
+  color: var(--zava-blue);
+}
+
+/* Notifications */
+.notification {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1000;
+  padding: 0.75rem 1.25rem;
+  border-radius: 10px;
+  color: white;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateX(120%);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  min-width: 220px;
+}
+.notification.show { opacity: 1; transform: translateX(0); }
+.notification.success { background: #059669; }
+.notification.error { background: #dc2626; }
+.notification.info { background: var(--zava-blue); }
+
+/* Animations */
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.animate-spin { animation: spin 1s linear infinite; }
+.animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #f4f6f8; border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: var(--zava-blue); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--zava-navy); }
+
+/* Utilities */
+.line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; }
+.line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+
+/* Modal */
+.modal-backdrop { background: rgba(27, 58, 82, 0.5); backdrop-filter: blur(4px); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

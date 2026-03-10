@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Success — Zava Photo Uploader</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
+</head>
+<body class="zava-bg">
+    <nav class="zava-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/"><img src="/static/images/Zava_logo_color_small.png" alt="Zava" class="zava-logo"></a>
+                </div>
+                <div class="flex items-center space-x-1">
+                    <a href="/" class="zava-nav-link px-4 py-2 text-sm font-medium"><i class="fas fa-upload mr-1"></i> Upload More</a>
+                    <a href="/gallery" class="zava-nav-link px-4 py-2 text-sm font-medium"><i class="fas fa-images mr-1"></i> Gallery</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-2xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-check-circle text-4xl text-green-500"></i>
+            </div>
+            <h1 class="text-3xl font-bold zava-heading mb-2">Upload Successful!</h1>
+            <p class="text-gray-500">Your photo has been saved locally.</p>
+        </div>
+
+        <div class="zava-card p-6 mb-6">
+            <h2 class="text-sm font-bold zava-heading mb-5 uppercase tracking-wide">Upload Details</h2>
+            <div class="divide-y divide-gray-50">
+                <div class="flex justify-between items-center py-3">
+                    <dt class="text-sm text-gray-400 flex-shrink-0 mr-4">Original Filename</dt>
+                    <dd class="text-sm font-medium text-gray-800 text-right truncate max-w-xs" title="{{ filename }}">{{ filename }}</dd>
+                </div>
+                <div class="flex justify-between items-center py-3">
+                    <dt class="text-sm text-gray-400 flex-shrink-0 mr-4">Saved As</dt>
+                    <dd class="text-sm font-medium text-gray-800 text-right truncate max-w-xs" title="{{ result.filename }}">{{ result.filename }}</dd>
+                </div>
+                <div class="flex justify-between items-center py-3">
+                    <dt class="text-sm text-gray-400">File Size</dt>
+                    <dd class="text-sm font-medium text-gray-800">{{ "%.2f"|format(result.file_size / 1024 / 1024) }} MB</dd>
+                </div>
+                <div class="flex justify-between items-center py-3">
+                    <dt class="text-sm text-gray-400">Type</dt>
+                    <dd class="text-sm font-medium text-gray-800">{{ result.content_type }}</dd>
+                </div>
+                <div class="flex justify-between items-center py-3">
+                    <dt class="text-sm text-gray-400">Uploaded</dt>
+                    <dd class="text-sm font-medium text-gray-800">{{ result.upload_timestamp }}</dd>
+                </div>
+                <div class="flex justify-between items-center py-3">
+                    <dt class="text-sm text-gray-400">URL</dt>
+                    <dd class="flex items-center gap-2">
+                        <span class="text-sm font-medium" style="color:#00A4EF;">/photos/{{ result.filename }}</span>
+                        <button onclick="copyToClipboard('/photos/{{ result.filename }}')" class="text-gray-400 hover:text-gray-600 transition-colors">
+                            <i class="fas fa-copy text-sm"></i>
+                        </button>
+                    </dd>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+            <a href="/" class="zava-btn-primary"><i class="fas fa-upload"></i> Upload Another Photo</a>
+            <a href="/gallery" class="zava-btn-outline"><i class="fas fa-images"></i> View Gallery</a>
+        </div>
+
+        <div class="rounded-xl p-5" style="background:rgba(0,164,239,0.06); border:1px solid rgba(0,164,239,0.15);">
+            <div class="flex items-start">
+                <i class="fas fa-check-circle mt-0.5 mr-3" style="color:#00A4EF;"></i>
+                <div>
+                    <h3 class="text-sm font-semibold zava-heading mb-2">Photo saved successfully</h3>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li>✅ File type validated</li>
+                        <li>✅ Stored in local uploads directory</li>
+                        <li>✅ Available in gallery immediately</li>
+                        <li>✅ Accessible via REST API</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                const btn = event.target.closest('button');
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check text-green-500"></i>';
+                setTimeout(() => { btn.innerHTML = orig; }, 1500);
+            });
+        }
+    </script>
+</body>
+</html>

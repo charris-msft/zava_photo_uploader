@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery — Zava Photo Uploader</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
+    <style>
+        .album-section + .album-section { margin-top: 2.5rem; }
+        .preview-img-wrap { background: #0d1b27; display: flex; align-items: center; justify-content: center; min-height: 300px; max-height: 65vh; overflow: hidden; }
+        .preview-img-wrap img { max-height: 65vh; max-width: 100%; object-fit: contain; }
+        #previewModal { transition: opacity .15s; }
+        .photo-card-thumb { cursor: pointer; transition: transform .15s, box-shadow .15s; }
+        .photo-card-thumb:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,164,239,.18); }
+        .copied-flash { animation: flashGreen .4s ease; }
+        @keyframes flashGreen { 0%,100%{color:inherit} 50%{color:#22c55e} }
+    </style>
+</head>
+<body class="zava-bg">
+    <nav class="zava-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/"><img src="/static/images/Zava_logo_color_small.png" alt="Zava" class="zava-logo"></a>
+                </div>
+                <div class="flex items-center space-x-1">
+                    <a href="/" class="zava-nav-link px-4 py-2 text-sm font-medium"><i class="fas fa-upload mr-1"></i> Upload</a>
+                    <a href="/gallery" class="zava-nav-link active px-4 py-2 text-sm font-medium"><i class="fas fa-images mr-1"></i> Gallery</a>
+                    <a href="/api/docs" class="zava-nav-link px-4 py-2 text-sm font-medium"><i class="fas fa-code mr-1"></i> API</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold zava-heading mb-2">Photo Gallery</h1>
+            <p class="text-gray-500">Browse your uploaded photos by album</p>
+        </div>
+
+        {% if photos %}
+        <!-- Stats bar -->
+        <div class="zava-card p-5 mb-8 flex items-center justify-between">
+            <div class="flex items-center gap-8">
+                <div>
+                    <p class="text-3xl font-bold zava-heading">{{ photos|length }}</p>
+                    <p class="text-sm text-gray-500 mt-0.5">Total photos</p>
+                </div>
+                <div>
+                    <p class="text-3xl font-bold zava-heading">{{ albums|length }}</p>
+                    <p class="text-sm text-gray-500 mt-0.5">Albums</p>
+                </div>
+            </div>
+            <div class="zava-icon-circle" style="width:3rem;height:3rem;">
+                <i class="fas fa-images" style="font-size:1.25rem;"></i>
+            </div>
+        </div>
+
+        <!-- Album sections -->
+        {% for album_name, album_photos in albums.items() %}
+        <section class="album-section">
+            <div class="flex items-center gap-3 mb-4">
+                <i class="fas fa-folder" style="color:#00A4EF; font-size:1.1rem;"></i>
+                <h2 class="text-xl font-bold zava-heading">{{ album_name }}</h2>
+                <span class="text-sm text-gray-400 font-medium">({{ album_photos|length }})</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                {% for photo in album_photos %}
+                <div class="zava-card-photo photo-card-thumb" onclick="openPreview('{{ photo.name | e }}')">
+                    <div class="relative overflow-hidden" style="height:200px;">
+                        <img
+                            src="/photos/{{ photo.name|urlencode }}"
+                            alt="{{ photo.name }}"
+                            class="w-full h-full object-cover"
+                            loading="lazy"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                        >
+                        <div class="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 items-center justify-center absolute inset-0" style="display:none;">
+                            <div class="text-center">
+                                <i class="fas fa-image text-3xl text-gray-300 mb-1"></i>
+                                <p class="text-xs text-gray-400">Unavailable</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-3">
+                        <h3 class="font-semibold text-gray-800 truncate text-sm" title="{{ photo.name }}">{{ photo.name }}</h3>
+                        <div class="flex items-center justify-between mt-1 text-xs text-gray-400">
+                            <span><i class="fas fa-hdd mr-1"></i>{{ "%.1f"|format(photo.size / 1024) }} KB</span>
+                            <span>{{ photo.last_modified[:10] if photo.last_modified else '' }}</span>
+                        </div>
+                        {% if photo.metadata and photo.metadata.get('description') %}
+                        <p class="text-xs text-gray-500 mt-1 truncate" title="{{ photo.metadata.description }}">{{ photo.metadata.description }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endfor %}
+
+        {% else %}
+        <div class="text-center py-20">
+            <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5" style="background:rgba(0,164,239,0.08);">
+                <i class="fas fa-images text-3xl" style="color:#00A4EF;"></i>
+            </div>
+            <h3 class="text-xl font-bold zava-heading mb-2">No photos yet</h3>
+            <p class="text-gray-500 mb-6">Upload your first photo to get started</p>
+            <a href="/" class="zava-btn-primary"><i class="fas fa-upload"></i> Upload Your First Photo</a>
+        </div>
+        {% endif %}
+    </main>
+
+    <!-- Photo Preview Modal -->
+    <div id="previewModal" class="fixed inset-0 z-50 hidden" style="background:rgba(13,27,39,0.82); backdrop-filter:blur(6px);">
+        <div class="flex flex-col items-center justify-center min-h-full p-4">
+            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden">
+                <!-- Top bar -->
+                <div class="flex items-center justify-between px-5 py-3 border-b border-gray-100">
+                    <div class="min-w-0">
+                        <p id="previewName" class="text-sm font-semibold text-gray-800 truncate max-w-xs" title=""></p>
+                        <p id="previewMeta" class="text-xs text-gray-400 mt-0.5"></p>
+                    </div>
+                    <button onclick="closePreview()" class="ml-4 flex-shrink-0 text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Image -->
+                <div class="preview-img-wrap">
+                    <img id="previewImg" src="" alt="" />
+                </div>
+
+                <!-- Action bar -->
+                <div class="flex items-center justify-between px-5 py-3 border-t border-gray-100 bg-gray-50">
+                    <div class="flex items-center gap-2">
+                        <!-- Album badge -->
+                        <span id="previewAlbum" class="zava-tag hidden"><i class="fas fa-folder mr-1"></i><span id="previewAlbumName"></span></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="btnCopyUrl" onclick="copyPreviewUrl()" class="zava-btn-outline text-xs py-1.5 px-3 flex items-center gap-1.5">
+                            <i class="fas fa-link"></i> Copy URL
+                        </button>
+                        <a id="btnDownload" href="#" download class="zava-btn-primary text-xs py-1.5 px-3 flex items-center gap-1.5">
+                            <i class="fas fa-download"></i> Download
+                        </a>
+                        <button id="btnDelete" onclick="deletePreviewPhoto()" class="text-xs font-semibold text-gray-400 hover:text-red-500 transition-colors ml-1 flex items-center gap-1">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Description (if any) -->
+                <div id="previewDescWrap" class="px-5 pb-4 hidden">
+                    <p id="previewDesc" class="text-xs text-gray-500"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const PHOTOS = {{ photos_json | safe }};
+        const photoMap = {};
+        PHOTOS.forEach(p => { photoMap[p.name] = p; });
+
+        let currentPhotoName = null;
+
+        function openPreview(name) {
+            const photo = photoMap[name];
+            if (!photo) return;
+            currentPhotoName = name;
+
+            document.getElementById('previewImg').src = photo.url;
+            document.getElementById('previewImg').alt = name;
+            document.getElementById('previewName').textContent = name;
+            document.getElementById('previewName').title = name;
+
+            const album = (photo.metadata && photo.metadata.album) ? photo.metadata.album : '';
+            const sizeKb = (photo.size / 1024).toFixed(1);
+            const date = photo.last_modified ? photo.last_modified.slice(0, 10) : '';
+            document.getElementById('previewMeta').textContent =
+                [sizeKb + ' KB', date].filter(Boolean).join('  ·  ');
+
+            const albumEl = document.getElementById('previewAlbum');
+            if (album) {
+                document.getElementById('previewAlbumName').textContent = album;
+                albumEl.classList.remove('hidden');
+            } else {
+                albumEl.classList.add('hidden');
+            }
+
+            document.getElementById('btnDownload').href = photo.url;
+            document.getElementById('btnDownload').download = name;
+
+            const desc = (photo.metadata && photo.metadata.description) ? photo.metadata.description : '';
+            const descWrap = document.getElementById('previewDescWrap');
+            if (desc) {
+                document.getElementById('previewDesc').textContent = desc;
+                descWrap.classList.remove('hidden');
+            } else {
+                descWrap.classList.add('hidden');
+            }
+
+            document.getElementById('previewModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePreview() {
+            document.getElementById('previewModal').classList.add('hidden');
+            document.getElementById('previewImg').src = '';
+            document.body.style.overflow = '';
+            currentPhotoName = null;
+        }
+
+        function copyPreviewUrl() {
+            const photo = photoMap[currentPhotoName];
+            if (!photo) return;
+            const url = window.location.origin + photo.url;
+            navigator.clipboard.writeText(url).then(() => {
+                const btn = document.getElementById('btnCopyUrl');
+                const orig = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                btn.style.color = '#22c55e';
+                setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 1800);
+            });
+        }
+
+        async function deletePreviewPhoto() {
+            if (!currentPhotoName) return;
+            if (!confirm(`Delete "${currentPhotoName}"? This cannot be undone.`)) return;
+            try {
+                const resp = await fetch(`/api/photos/${encodeURIComponent(currentPhotoName)}`, { method: 'DELETE' });
+                if (resp.ok) { closePreview(); window.location.reload(); }
+                else { const e = await resp.json(); alert(`Error: ${e.detail || 'Unknown'}`); }
+            } catch (e) { alert('Error deleting photo'); }
+        }
+
+        // Close on backdrop click
+        document.getElementById('previewModal').addEventListener('click', function(e) {
+            if (e.target === this) closePreview();
+        });
+        // Close on Escape
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closePreview(); });
+    </script>
+</body>
+</html>

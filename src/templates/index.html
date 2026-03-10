@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zava Photo Uploader</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
+</head>
+<body class="zava-bg">
+    <nav class="zava-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/"><img src="/static/images/Zava_logo_color_small.png" alt="Zava" class="zava-logo"></a>
+                </div>
+                <div class="flex items-center space-x-1">
+                    <a href="/" class="zava-nav-link active px-4 py-2 text-sm font-medium"><i class="fas fa-upload mr-1"></i> Upload</a>
+                    <a href="/gallery" class="zava-nav-link px-4 py-2 text-sm font-medium"><i class="fas fa-images mr-1"></i> Gallery</a>
+                    <a href="/api/docs" class="zava-nav-link px-4 py-2 text-sm font-medium"><i class="fas fa-code mr-1"></i> API</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold zava-heading mb-3">Upload Your Photos</h1>
+            <p class="text-lg text-gray-500 max-w-xl mx-auto">Drag and drop or select photos to store them locally.</p>
+        </div>
+
+        <div class="zava-card">
+            <div class="px-6 py-8">
+                <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data" class="space-y-6">
+                    <div class="space-y-2">
+                        <label for="file" class="block text-sm font-semibold text-gray-700">Select Photo</label>
+                        <div class="zava-drop-zone flex justify-center px-6 pt-10 pb-10" id="dropZone">
+                            <div class="space-y-3 text-center">
+                                <div class="mx-auto w-14 h-14 rounded-full flex items-center justify-center" style="background: rgba(0,164,239,0.1);">
+                                    <i class="fas fa-cloud-upload-alt text-2xl" style="color:#00A4EF;"></i>
+                                </div>
+                                <div class="flex text-sm text-gray-500 justify-center">
+                                    <label for="file" class="cursor-pointer font-semibold" style="color:#00A4EF;">
+                                        <span>Choose a photo</span>
+                                        <input id="file" name="file" type="file" class="sr-only" accept="image/*" required>
+                                    </label>
+                                    <p class="pl-1">or drag and drop</p>
+                                </div>
+                                <p class="text-xs text-gray-400">PNG, JPG, GIF, WebP up to 100MB</p>
+                            </div>
+                        </div>
+                        <div id="filePreview" class="hidden mt-4">
+                            <div class="flex items-center p-4 bg-gray-50 rounded-xl border border-gray-100">
+                                <img id="previewImage" class="h-16 w-16 object-cover rounded-lg mr-4" alt="Preview">
+                                <div class="flex-1 min-w-0">
+                                    <p id="fileName" class="text-sm font-semibold text-gray-900 truncate"></p>
+                                    <p id="fileSize" class="text-sm text-gray-400"></p>
+                                </div>
+                                <button type="button" id="removeFile" class="ml-4 text-gray-400 hover:text-red-500 transition-colors">
+                                    <i class="fas fa-times-circle text-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="album" class="block text-sm font-semibold text-gray-700 mb-1">Album <span class="text-gray-400 font-normal">(optional)</span></label>
+                        <input type="text" name="album" id="album" class="zava-input" placeholder="e.g., Summer Vacation, Wedding Photos">
+                    </div>
+
+                    <div>
+                        <label for="description" class="block text-sm font-semibold text-gray-700 mb-1">Description <span class="text-gray-400 font-normal">(optional)</span></label>
+                        <textarea name="description" id="description" rows="3" class="zava-input" placeholder="Add a description for your photo..."></textarea>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="zava-btn-primary w-full text-base py-3">
+                        <i class="fas fa-upload"></i> Upload Photo
+                    </button>
+                </form>
+            </div>
+            <div id="progressContainer" class="hidden px-6 pb-6">
+                <div class="zava-progress-track">
+                    <div id="progressBar" class="zava-progress-bar" style="width: 0%"></div>
+                </div>
+                <p id="progressText" class="text-sm text-gray-500 mt-2 text-center">Uploading...</p>
+            </div>
+        </div>
+
+        <div class="mt-8 zava-card p-6">
+            <h3 class="text-sm font-bold zava-heading mb-4 uppercase tracking-wide">Features</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="flex items-center space-x-3"><div class="zava-icon-circle"><i class="fas fa-hdd text-sm"></i></div><span class="text-sm text-gray-600">Local Storage</span></div>
+                <div class="flex items-center space-x-3"><div class="zava-icon-circle"><i class="fas fa-shield-alt text-sm"></i></div><span class="text-sm text-gray-600">File Validation</span></div>
+                <div class="flex items-center space-x-3"><div class="zava-icon-circle"><i class="fas fa-expand-arrows-alt text-sm"></i></div><span class="text-sm text-gray-600">100MB Limit</span></div>
+                <div class="flex items-center space-x-3"><div class="zava-icon-circle"><i class="fas fa-images text-sm"></i></div><span class="text-sm text-gray-600">Photo Gallery</span></div>
+                <div class="flex items-center space-x-3"><div class="zava-icon-circle"><i class="fas fa-mobile-alt text-sm"></i></div><span class="text-sm text-gray-600">Mobile Friendly</span></div>
+                <div class="flex items-center space-x-3"><div class="zava-icon-circle"><i class="fas fa-code text-sm"></i></div><span class="text-sm text-gray-600">REST API</span></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-16 zava-footer">
+        <div class="max-w-7xl mx-auto py-6 px-4 text-center text-sm">
+            🖼️ Zava Photo Uploader — running locally
+        </div>
+    </footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
